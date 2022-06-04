@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:service_mobil_mobile/halaman/jasa_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -62,18 +63,14 @@ class _HomeState extends State<Home> {
                 ? CarouselSlider(
                     options: CarouselOptions(height: 170.0),
                     items: promo.map((gambar) {
-                      return Image.network(
-                          "https://bengkel.famenarakudus.com/storage/foto_banner/" +
-                              gambar['gambar_banner']);
+                      return Image.network("https://bengkel.famenarakudus.com/storage/foto_banner/" + gambar['gambar_banner']);
                     }).toList(),
                   )
                 : CircularProgressIndicator(),
             SizedBox(
               height: 20,
             ),
-            Text('Jasa Pekerjaan Kami',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text('Jasa Pekerjaan Kami', textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             SizedBox(
               height: 20,
             ),
@@ -120,11 +117,16 @@ class _HomeState extends State<Home> {
                 onPrimary: Color.fromARGB(255, 255, 255, 255), // foreground
               ),
               onPressed: () async {
-                await launchUrl(Uri.parse(
-                    "https://wa.me/6285713844212/?text=Aplikasi Tes"));
+                var url = "https://api.whatsapp.com/send/?phone=6285713844212&text=Aplikasi Tes";
+                if (await canLaunchUrlString(url)) {
+                  await launchUrlString(
+                    url,
+                    mode: LaunchMode.externalApplication,
+                  );
+                }
               },
               child: Text(
-                'Call Canter Bangkel',
+                'Call Center Bangkel',
                 style: TextStyle(fontSize: 20),
               ),
             ),
@@ -136,8 +138,7 @@ class _HomeState extends State<Home> {
 
   getBanner() async {
     try {
-      final response =
-          await dio.get("https://bengkel.famenarakudus.com/api/promo");
+      final response = await dio.get("https://bengkel.famenarakudus.com/api/promo");
       print(response.data);
       if (response.statusCode == 200) {
         // var data = jsonDecode(response.data);
@@ -152,8 +153,7 @@ class _HomeState extends State<Home> {
 
   getJasa() async {
     try {
-      final response =
-          await dio.get("https://bengkel.famenarakudus.com/api/jasa");
+      final response = await dio.get("https://bengkel.famenarakudus.com/api/jasa");
       print(response.data);
       if (response.statusCode == 200) {
         // var data = jsonDecode(response.data);
